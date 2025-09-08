@@ -4,7 +4,7 @@
 
 ### Create Your Free Account
 
-**Step 1:** Visit the Databricks Free Edition signup page
+**Step 1:** Visit the Databricks Free Edition signup page - https://www.databricks.com/learn/free-edition
 
 **Step 2:** Choose your preferred signup method (Google, Microsoft, or email)
 
