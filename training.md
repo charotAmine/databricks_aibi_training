@@ -5,13 +5,17 @@
 ### Create Your Free Account
 
 **Step 1:** Visit the Databricks Free Edition signup page
+
 **Step 2:** Choose your preferred signup method (Google, Microsoft, or email)
+
 **Step 3:** Complete account verification - Databricks will immediately create your workspace
+
 **Step 4:** Access your workspace through the provided URL
 
 ### Initial Workspace Setup
 
 **Step 5:** Navigate to the workspace interface and familiarize yourself with the sidebar navigation
+
 **Step 6:** Locate the "Data" section in the sidebar to prepare for data ingestion
 
 ## 1. Data Ingestion: Create Catalog, Schema \& Upload Related Tables
@@ -19,7 +23,9 @@
 ### Create Unity Catalog Structure via UI
 
 **Step 1:** In the Databricks workspace sidebar, click "Catalog"
+
 **Step 2:** Click "Catalogs" below Quick access
+
 **Step 3:** Click "Create catalog"
 
 **Step 4:** In the "Create a new catalog" dialog:
@@ -32,18 +38,20 @@
 
 ### Create Schema via UI
 
-**Step 6:** Click on your newly created sales_analytics catalog
-**Step 7:** Click "Create Schema"
-**Step 8:** In the schema creation dialog:
+**Step 1:** Click on your newly created sales_analytics catalog
 
-- Schema name: `raw_data`
+**Step 2:** Click "Create Schema"
+
+**Step 3:** In the schema creation dialog:
+
+- Schema name: `sales_data`
 - Comment: Schema for raw sales and customer data (optional)
 
-**Step 9:** Click "Create" to create your schema
+**Step 4:** Click "Create" to create your schema
 
 ### Upload Sales Transactions Table
 
-**Step 10:** Create `sales_transactions.csv` on your local machine:
+**Step 1:** Create `sales_transactions.csv` on your local machine:
 
 ```csv
 order_id,customer_id,product_name,category,quantity,unit_price,total_amount,order_date,sales_rep,region
@@ -59,19 +67,21 @@ order_id,customer_id,product_name,category,quantity,unit_price,total_amount,orde
 1010,CUST_002,Table Lamp,Furniture,2,34.99,69.98,2024-01-24,Jane Doe,South
 ```
 
-**Step 11:** In the schema, click "create" → "table"
-**Step 12:** Click "browse", upload the file
-**Step 13:** Configure:
+**Step 2:** In the schema, click "create" → "table"
+
+**Step 3:** Click "browse", upload the file
+
+**Step 4:** Configure:
 
 - Catalog: `sales_analytics`
-- Schema: `raw_data`
+- Schema: `sales_data`
 - Table name: `sales_transactions`
 
-**Step 14:** Click "Create" to create the table
+**Step 5:** Click "Create" to create the table
 
 ### Upload Customers Table
 
-**Step 15:** Create `customers.csv` on your local machine:
+**Step 6:** Create `customers.csv` on your local machine:
 
 ```csv
 customer_id,customer_name,customer_email,city,signup_date,customer_segment
@@ -81,19 +91,19 @@ CUST_003,Carol Lee,carol.lee@example.com,Greenville,2023-10-05,Premium
 CUST_004,David Kim,david.kim@example.com,Lakeside,2023-11-12,Standard
 ```
 
-**Step 16:** Repeat the upload process for customers table:
+**Step 7:** Repeat the upload process for customers table:
 
 - Table name: `customers`
-- Same catalog and schema: `sales_analytics.raw_data`
+- Same catalog and schema: `sales_analytics.sales_data`
 
-**Step 17:** Verify both tables exist by navigating to Catalog → sales_analytics → raw_data
+**Step 8:** Verify both tables exist by navigating to Catalog → sales_analytics → sales_data
 
 ## 2. Data Exploration with Genie: Single Table \& Join Queries
 
 ### Basic Single-Table Analysis
 
 **Step 1:** Open Genie from the AI/BI section in the sidebar
-**Step 2:** Connect to your sales_analytics.raw_data schema and select all tables
+**Step 2:** Connect to your sales_analytics.sales_data schema and select all tables
 
 ### Basic Sales Analysis Prompts:
 
@@ -150,11 +160,13 @@ CUST_004,David Kim,david.kim@example.com,Lakeside,2023-11-12,Standard
 ### Create Additional Tables
 
 **Step 1:** Go to query
+
 **Step 2:** Create Query
+
 **Step 3:** Create Products Table with Cost Information
 
 ```sql
-CREATE TABLE sales_analytics.raw_data.products (
+CREATE TABLE sales_analytics.sales_data.products (
   product_id STRING,
   product_name STRING,
   category STRING,
@@ -164,7 +176,7 @@ CREATE TABLE sales_analytics.raw_data.products (
   launch_date DATE
 ) USING DELTA;
 
-INSERT INTO sales_analytics.raw_data.products VALUES
+INSERT INTO sales_analytics.sales_data.products VALUES
   ('PROD_001', 'Wireless Headphones', 'Electronics', 99.99, 65.00, 'Brand A', '2023-06-01'),
   ('PROD_002', 'Office Chair', 'Furniture', 299.99, 180.00, 'Brand B', '2023-07-15'),
   ('PROD_003', 'Coffee Machine', 'Appliances', 149.99, 95.00, 'Brand C', '2023-08-10'),
@@ -185,7 +197,7 @@ INSERT INTO sales_analytics.raw_data.products VALUES
 **Step 4:** Create Sales Targets Table
 
 ```sql
-CREATE TABLE sales_analytics.raw_data.sales_targets (
+CREATE TABLE sales_analytics.sales_data.sales_targets (
   sales_rep STRING,
   region STRING,
   target_amount DECIMAL(10,2),
@@ -193,7 +205,7 @@ CREATE TABLE sales_analytics.raw_data.sales_targets (
   year INT
 ) USING DELTA;
 
-INSERT INTO sales_analytics.raw_data.sales_targets VALUES
+INSERT INTO sales_analytics.sales_data.sales_targets VALUES
   ('John Smith', 'North', 2000.00, '2024-Q1', 2024),
   ('Jane Doe', 'South', 1800.00, '2024-Q1', 2024),
   ('Mike Johnson', 'West', 2100.00, '2024-Q1', 2024),
@@ -244,10 +256,10 @@ SELECT
     EXTRACT(QUARTER FROM s.order_date) as order_quarter,
     DAYNAME(s.order_date) as day_name,
     WEEKOFYEAR(s.order_date) as week_number
-FROM sales_analytics.raw_data.sales_transactions s
-LEFT JOIN sales_analytics.raw_data.customers c ON s.customer_id = c.customer_id
-LEFT JOIN sales_analytics.raw_data.products p ON s.product_name = p.product_name
-LEFT JOIN sales_analytics.raw_data.sales_targets t ON s.sales_rep = t.sales_rep 
+FROM sales_analytics.sales_data.sales_transactions s
+LEFT JOIN sales_analytics.sales_data.customers c ON s.customer_id = c.customer_id
+LEFT JOIN sales_analytics.sales_data.products p ON s.product_name = p.product_name
+LEFT JOIN sales_analytics.sales_data.sales_targets t ON s.sales_rep = t.sales_rep 
     AND s.region = t.region AND t.year = 2024
 WHERE s.total_amount > 0;
 ```
@@ -276,9 +288,9 @@ WITH customer_metrics AS (
     -- Product preferences
     COUNT(DISTINCT p.category) as categories_purchased,
     COUNT(DISTINCT p.brand) as brands_purchased
-  FROM sales_analytics.raw_data.customers c
-  LEFT JOIN sales_analytics.raw_data.sales_transactions s ON c.customer_id = s.customer_id
-  LEFT JOIN sales_analytics.raw_data.products p ON s.product_name = p.product_name
+  FROM sales_analytics.sales_data.customers c
+  LEFT JOIN sales_analytics.sales_data.sales_transactions s ON c.customer_id = s.customer_id
+  LEFT JOIN sales_analytics.sales_data.products p ON s.product_name = p.product_name
   GROUP BY c.customer_id, c.customer_name, c.city
 )
 SELECT 
@@ -345,10 +357,10 @@ SELECT
     -- Efficiency metrics
     ROUND(SUM(s.total_amount) / COUNT(s.order_id), 2) as revenue_per_deal,
     ROUND(SUM(s.total_amount) / COUNT(DISTINCT s.customer_id), 2) as revenue_per_customer
-FROM sales_analytics.raw_data.sales_transactions s
-LEFT JOIN sales_analytics.raw_data.sales_targets t ON s.sales_rep = t.sales_rep 
+FROM sales_analytics.sales_data.sales_transactions s
+LEFT JOIN sales_analytics.sales_data.sales_targets t ON s.sales_rep = t.sales_rep 
     AND s.region = t.region AND t.year = 2024
-LEFT JOIN sales_analytics.raw_data.products p ON s.product_name = p.product_name
+LEFT JOIN sales_analytics.sales_data.products p ON s.product_name = p.product_name
 GROUP BY s.sales_rep, s.region
 HAVING MAX(t.target_amount) IS NOT NULL;
 ```
@@ -379,9 +391,9 @@ SELECT
     -- Geographic distribution
     COUNT(DISTINCT c.city) as cities_sold_in,
     COUNT(DISTINCT s.region) as regions_sold_in
-FROM sales_analytics.raw_data.products p
-LEFT JOIN sales_analytics.raw_data.sales_transactions s ON p.product_name = s.product_name
-LEFT JOIN sales_analytics.raw_data.customers c ON s.customer_id = c.customer_id
+FROM sales_analytics.sales_data.products p
+LEFT JOIN sales_analytics.sales_data.sales_transactions s ON p.product_name = s.product_name
+LEFT JOIN sales_analytics.sales_data.customers c ON s.customer_id = c.customer_id
 GROUP BY p.product_id, p.product_name, p.category, p.brand, p.unit_price, p.cost, p.launch_date;
 ```
 
@@ -540,7 +552,7 @@ Create Customer Reviews data :
 
 ```sql
 -- Add customer feedback table
-CREATE TABLE sales_analytics.raw_data.customer_reviews (
+CREATE TABLE sales_analytics.sales_data.customer_reviews (
   review_id STRING,
   customer_id STRING,
   product_name STRING,
@@ -548,7 +560,7 @@ CREATE TABLE sales_analytics.raw_data.customer_reviews (
   review_date DATE
 ) USING DELTA;
 
-INSERT INTO sales_analytics.raw_data.customer_reviews VALUES
+INSERT INTO sales_analytics.sales_data.customer_reviews VALUES
   ('REV_001', 'CUST_001', 'Wireless Headphones', 'Amazing sound quality and comfortable fit. Love these headphones!', '2024-01-20'),
   ('REV_002', 'CUST_002', 'Office Chair', 'Chair is okay but assembly was difficult. Could be more comfortable.', '2024-01-22'),
   ('REV_003', 'CUST_003', 'Coffee Machine', 'Perfect coffee every morning! Easy to use and clean. Highly recommend.', '2024-01-25'),
@@ -607,9 +619,9 @@ SELECT
         'Rate the urgency of addressing this customer feedback on a scale 1-5 (1=low, 5=urgent). Return only the number: ' || r.review_text
     ) as urgency_score
 
-FROM sales_analytics.raw_data.customer_reviews r
-LEFT JOIN sales_analytics.raw_data.customers c ON r.customer_id = c.customer_id
-LEFT JOIN sales_analytics.raw_data.products p ON r.product_name = p.product_name;
+FROM sales_analytics.sales_data.customer_reviews r
+LEFT JOIN sales_analytics.sales_data.customers c ON r.customer_id = c.customer_id
+LEFT JOIN sales_analytics.sales_data.products p ON r.product_name = p.product_name;
 ```
 
 
